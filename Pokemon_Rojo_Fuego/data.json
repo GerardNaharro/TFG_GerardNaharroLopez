@@ -1,0 +1,100 @@
+{
+  "info": {
+    "EnemyHP1": {
+      "address": 33702018,
+      "type": "<u2"
+    },
+    "EnemyHP2": {
+      "address": 33702118,
+      "type": "<u2"
+    },
+    "EnemyHP3": {
+      "address": 33702218,
+      "type": "<u2"
+    },
+    "EnemyHP4": {
+      "address": 33702318,
+      "type": "<u2"
+    },
+    "EnemyHP5": {
+      "address": 33702418,
+      "type": "<u2"
+    },
+    "EnemyHP6": {
+      "address": 33702518,
+      "type": "<u2"
+    },
+    "HP1": {
+      "address": 33702618,
+      "type": "<u2"
+    },
+    "HP2": {
+      "address": 33702718,
+      "type": "<u2"
+    },
+    "HP3": {
+      "address": 33702818,
+      "type": "<u2"
+    },
+    "HP4": {
+      "address": 33702918,
+      "type": "<u2"
+    },
+    "HP5": {
+      "address": 33703018,
+      "type": "<u2"
+    },
+    "HP6": {
+      "address": 33703118,
+      "type": "<u2"
+    },
+    "Nickname1": {
+      "address": 33702540,
+      "type": "<u10"
+    },
+    "Nickname2": {
+      "address": 33702640,
+      "type": "<u10"
+    },
+    "Nickname3": {
+      "address": 33702740,
+      "type": "<u10"
+    },
+    "Nickname4": {
+      "address": 33702840,
+      "type": "<u10"
+    },
+    "Nickname5": {
+      "address": 33702940,
+      "type": "<u10"
+    },
+    "Nickname6": {
+      "address": 33703040,
+      "type": "<u10"
+    },
+    "EnemyNickname1": {
+      "address": 33701940,
+      "type": "<u10"
+    },
+    "EnemyNickname2": {
+      "address": 33702040,
+      "type": "<u10"
+    },
+    "EnemyNickname3": {
+      "address": 33702140,
+      "type": "<u10"
+    },
+    "EnemyNickname4": {
+      "address": 33702240,
+      "type": "<u10"
+    },
+    "EnemyNickname5": {
+      "address": 33702340,
+      "type": "<u10"
+    },
+    "EnemyNickname6": {
+      "address": 33702440,
+      "type": "<u10"
+    }
+  }
+}
