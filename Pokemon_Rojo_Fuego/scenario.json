@@ -1,0 +1,55 @@
+{
+  "crop": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "done": {
+    "script": "lua:pokemon_fire_red_done"
+  },
+  "reward": {
+    "variables": {
+      "EnemyHP1": {
+        "penalty": -1.0
+      },
+      "EnemyHP2": {
+        "penalty": -1.0
+      },
+      "EnemyHP3": {
+        "penalty": -1.0
+      },
+      "EnemyHP4": {
+        "penalty": -1.0
+      },
+      "EnemyHP5": {
+        "penalty": -1.0
+      },
+      "EnemyHP6": {
+        "penalty": -1.0
+      },
+      "HP1": {
+        "penalty": 1.0
+      },
+      "HP2": {
+        "penalty": 1.0
+      },
+      "HP3": {
+        "penalty": 1.0
+      },
+      "HP4": {
+        "penalty": 1.0
+      },
+      "HP5": {
+        "penalty": 1.0
+      },
+      "HP6": {
+        "penalty": 1.0
+      }
+    }
+  },
+  "scripts": [
+    "script.lua",
+    "script.lua"
+  ]
+}
