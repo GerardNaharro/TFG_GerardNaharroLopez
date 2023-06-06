@@ -1,0 +1,675 @@
+---
+title: "Estudio de la distribución"
+author: "Gerard Naharro López"
+date: "2023-04-21"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(dplyr)
+library("readxl")
+df <- read_excel("D:\\DATOS REDES NEURONALES\\impala\\GRAFICOS_IMPALA.xlsx")
+```
+
+
+
+```{r}
+hist(df$Reward, col = 'skyblue3', breaks= 50)
+plot(density(df$Reward))
+hist(df$Won, col = 'skyblue3', breaks= 2)
+table(df$Won)
+
+```
+
+
+
+
+
+```{r}
+library("readxl")
+df2 <- read_excel("D:\\DATOS REDES NEURONALES\\cnn\\GRAFICOS_CNN.xlsx")
+```
+
+
+
+
+```{r}
+hist(df2$Reward, col = 'skyblue3', breaks= 50)
+plot(density(df2$Reward))
+hist(df2$Won, col = 'skyblue3', breaks= 2)
+table(df2$Won)
+
+```
+
+
+
+
+
+```{r}
+impala <- df[, c("HP1", "HP2","HP3","HP4","HP5","HP6","Won","State")]
+cnn <- df2[, c("HP1", "HP2","HP3","HP4","HP5","HP6","Won","State")]
+```
+
+```{r}
+impala$vidaTotal <- rowSums(impala[0:6])
+cnn$vidaTotal <- rowSums(cnn[0:6])
+```
+
+```{r}
+resultados_impala <- impala %>%  
+  count(State, Won)
+```
+
+```{r}
+resultados_cnn <- cnn %>%  
+  count(State, Won)
+```
+
+
+```{r}
+impala<-impala[!(impala$vidaTotal==0),]
+cnn<-cnn[!(cnn$vidaTotal==0),]
+```
+
+```{r}
+resultados_impala <- impala %>%  
+  count(State, Won)
+```
+
+```{r}
+resultados_cnn <- cnn %>%  
+  count(State, Won)
+```
+
+```{r}
+hist(impala$vidaTotal, col = 'skyblue3', breaks= 22)
+hist(cnn$vidaTotal, col = 'skyblue3', breaks= 22)
+```
+```{r}
+library(ggplot2)
+ggplot(data = impala, aes(x = vidaTotal)) +
+  geom_histogram(aes(y = ..density.., fill = ..count..)) +
+  scale_fill_gradient(low = "#DCDCDC", high = "#7C7C7C") +
+  # scale_fill_gradient(low = 1, high = 2) +
+  stat_function(fun = dnorm, colour = "firebrick",
+                args = list(mean = mean(impala$vidaTotal),
+                            sd = sd(impala$vidaTotal))) +
+  ggtitle("Histograma + curva normal teórica IMPALA HP") +
+  theme_bw()
+```
+
+
+```{r}
+library(ggplot2)
+ggplot(data = cnn, aes(x = vidaTotal)) +
+  geom_histogram(aes(y = ..density.., fill = ..count..)) +
+  scale_fill_gradient(low = "#DCDCDC", high = "#7C7C7C") +
+  # scale_fill_gradient(low = 1, high = 2) +
+  stat_function(fun = dnorm, colour = "firebrick",
+                args = list(mean = mean(cnn$vidaTotal),
+                            sd = sd(cnn$vidaTotal))) +
+  ggtitle("Histograma + curva normal teórica CNN HP") +
+  theme_bw()
+```
+
+
+```{r}
+plot(ecdf(impala$vidaTotal))
+plot(ecdf(cnn$vidaTotal))
+```
+
+
+```{r}
+plot(density(impala$vidaTotal))
+plot(density(cnn$vidaTotal))
+```
+
+
+```{r}
+vidasImpala = aggregate(vidaTotal ~ State, data = impala, mean)
+
+```
+
+```{r}
+vidasCnn = aggregate(vidaTotal ~ State, data = cnn, mean)
+
+```
+
+```{r}
+pareados = vidasImpala
+pareados = cbind(pareados, vidasCnn['vidaTotal'])
+colnames(pareados)[2]  <- "vidaMediaImpala"
+colnames(pareados)[3]  <- "vidaMediaCnn"
+pareados
+```
+```{r}
+pareadosGanados = resultados_impala
+pareadosGanados = cbind(pareadosGanados, resultados_cnn['n'])
+pareadosGanados <- pareadosGanados[, -2]
+colnames(pareadosGanados)[2]  <- "GanadasImpala"
+colnames(pareadosGanados)[3]  <- "GanadasCnn"
+pareadosGanados
+```
+
+```{r}
+mean(impala$vidaTotal)
+mean(cnn$vidaTotal)
+```
+
+---------------------------------------------------------------------------------
+
+
+
+```{r}
+estados = unique(impala[,'State'])
+i = 0
+
+for(x in 1:length(estados$State)) {
+  
+  nam <- paste("ImpalaDF", i, sep = "")
+  assign(nam, subset(impala, State == estados$State[x]))
+  i = i + 1
+  
+}
+
+
+estados = unique(impala[,'State'])
+i = 0
+
+for(x in 1:length(estados$State)) {
+  
+  nam <- paste("CnnDF", i, sep = "")
+  assign(nam, subset(cnn, State == estados$State[x]))
+  i = i + 1
+  
+}
+
+
+```
+
+
+
+
+
+```{r}
+hist(ImpalaDF10$vidaTotal, col = 'skyblue3', breaks= 5)
+hist(CnnDF10$vidaTotal, col = 'skyblue3', breaks= 5)
+x.test <- shapiro.test(ImpalaDF10$vidaTotal)
+print(x.test)
+x.test <- shapiro.test(CnnDF10$vidaTotal)
+print(x.test)
+```
+
+```{r}
+hist(ImpalaDF20$vidaTotal, col = 'skyblue3', breaks= 6)
+hist(CnnDF20$vidaTotal, col = 'skyblue3', breaks= 6)
+x.test <- shapiro.test(ImpalaDF20$vidaTotal)
+print(x.test)
+x.test <- shapiro.test(CnnDF20$vidaTotal)
+print(x.test)
+```
+
+```{r}
+hist(ImpalaDF30$vidaTotal, col = 'skyblue3', breaks= 6)
+hist(CnnDF30$vidaTotal, col = 'skyblue3', breaks= 6)
+x.test <- shapiro.test(ImpalaDF30$vidaTotal)
+print(x.test)
+x.test <- shapiro.test(CnnDF30$vidaTotal)
+print(x.test)
+```
+
+```{r}
+hist(ImpalaDF40$vidaTotal, col = 'skyblue3', breaks= 6)
+hist(CnnDF40$vidaTotal, col = 'skyblue3', breaks= 6)
+x.test <- shapiro.test(ImpalaDF40$vidaTotal)
+print(x.test)
+x.test <- shapiro.test(CnnDF40$vidaTotal)
+print(x.test)
+```
+
+```{r}
+hist(ImpalaDF50$vidaTotal, col = 'skyblue3', breaks= 6)
+hist(CnnDF50$vidaTotal, col = 'skyblue3', breaks= 6)
+x.test <- shapiro.test(ImpalaDF50$vidaTotal)
+print(x.test)
+x.test <- shapiro.test(CnnDF50$vidaTotal)
+print(x.test)
+```
+
+
+```{r}
+hist(ImpalaDF60$vidaTotal, col = 'skyblue3', breaks= 6)
+hist(CnnDF60$vidaTotal, col = 'skyblue3', breaks= 6)
+x.test <- shapiro.test(ImpalaDF60$vidaTotal)
+print(x.test)
+x.test <- shapiro.test(CnnDF60$vidaTotal)
+print(x.test)
+```
+
+
+```{r}
+x.test <- wilcox.test(ImpalaDF10$vidaTotal, CnnDF10$vidaTotal)
+print(x.test)
+
+```
+
+```{r}
+x.test <- wilcox.test(ImpalaDF20$vidaTotal, CnnDF20$vidaTotal)
+print(x.test)
+
+```
+
+```{r}
+x.test <- wilcox.test(ImpalaDF30$vidaTotal, CnnDF30$vidaTotal)
+print(x.test)
+
+```
+
+```{r}
+x.test <- wilcox.test(ImpalaDF40$vidaTotal, CnnDF40$vidaTotal)
+print(x.test)
+
+```
+
+```{r}
+x.test <- wilcox.test(ImpalaDF50$vidaTotal, CnnDF50$vidaTotal)
+print(x.test)
+
+```
+
+```{r}
+x.test <- wilcox.test(ImpalaDF60$vidaTotal, CnnDF60$vidaTotal)
+print(x.test)
+```
+
+
+
+
+
+
+
+
+```{r eval=FALSE, include=FALSE}
+range <- 0:97
+for(y in range){
+  nam1 <- paste("ImpalaDF", y, sep = "")
+  
+  nam2 <- paste("CnnDF", y, sep = "")
+
+  name1 <- get(nam1)
+  name2 <- get(nam2)
+         
+  #x.test <- wilcox.test(name1$vidaTotal, name2$vidaTotal)
+  #print("----------------------------------------")
+  #print(y)
+  #print(x.test)
+  #print("----------------------------------------")
+}
+```
+
+
+
+
+los que son p < 0.05 -> 0,2,4,20,24,25,31,33,34,42,46,47,48,53,54,58,84,85,88,89
+
+```{r eval=FALSE, include=FALSE}
+nums <- c(0,2,4,20,24,25,31,33,34,42,46,47,48,53,54,58,84,85,88,89)
+for(i in nums){
+  
+  print("---------------------------")
+  print(i)
+  nam1 <- paste("ImpalaDF", i, sep = "")
+  
+  nam2 <- paste("CnnDF", i, sep = "")
+
+  name1 <- get(nam1)
+  name2 <- get(nam2)
+  
+  m1 = median(name1$vidaTotal)
+  m2 = median(name2$vidaTotal)
+  if(m1 > m2){
+    print("IMPALA")
+  } else{
+    print("CNN")
+  }
+  print("---------------------------")
+}
+
+```
+
+AZUL IMPALA / ROJO CNN
+AGRUPADOS DE DOS EN DOS
+```{r eval=FALSE, include=FALSE}
+nums <- c(0,2,4,20,24,25,31,33,34,42,46,47,48,53,54,58,84,85,88,89)
+
+
+for(i in nums){
+  nam1 <- paste("ImpalaDF", i, sep = "")
+  
+  nam2 <- paste("CnnDF", i, sep = "")
+
+  name1 <- get(nam1)
+  name2 <- get(nam2)
+  
+  par(mfrow=c(1,2))
+  hist(name1$vidaTotal, col = 'skyblue3', breaks= 6)
+  hist(name2$vidaTotal, col = 'brown1', breaks= 6)
+  
+}
+
+
+
+```
+
+```{r}
+nums <- c(1,3,5,21,25,26,32,34,35,43,47,48,49,54,55,59,85,86,89,90)
+num_data <- c(1:98)
+
+num_data <- num_data[!(num_data %in% nums)]
+
+modif <- pareados[-num_data, ]
+modif
+```
+
+
+
+```{r}
+
+x <- ImpalaDF1$vidaTotal
+B <- 10000
+set.seed(69)
+```
+
+```{r}
+bootmean <- replicate(B, mean(sample(x, rep = TRUE)))
+hist(bootmean)
+```
+
+```{r}
+getPermutations <- function(x) {
+    if (length(x) == 1) {
+        return(x)
+    }
+    else {
+        res <- matrix(nrow = 0, ncol = length(x))
+        for (i in seq_along(x)) {
+            res <- rbind(res, cbind(x[i], Recall(x[-i])))
+        }
+        return(res)
+    }
+}
+```
+
+
+```{r eval=FALSE, include=FALSE}
+library(jmuOutlier)
+
+B <- 10000
+set.seed(69)
+
+range <- 0:97
+for(y in range){
+  nam1 <- paste("ImpalaDF", y, sep = "")
+  
+  nam2 <- paste("CnnDF", y, sep = "")
+  
+  nam3 <- paste("test", y, sep = "")
+  #nam4 <- paste("testPERM", y, sep = "")
+
+  name1 <- get(nam1)
+  name2 <- get(nam2)
+  
+  # Total HP in each state
+  xImpala <- name1$vidaTotal
+  xCnn <- name2$vidaTotal
+
+  #Bootstrap
+  bootmeanImpala <- replicate(B, mean(sample(xImpala, size= 100, rep = TRUE)))
+  bootmeanCnn <- replicate(B, mean(sample(xCnn, size= 100, rep = TRUE)))
+  
+  #Calculate abs diff in means for each state
+  #meandiff <- abs(mean(xImpala) - mean(xCnn)) 
+  
+  #Tests
+  
+  #Bootstrap
+  assign(nam3, t.test(bootmeanImpala,bootmeanCnn)) 
+  
+  #Permutation
+  #assign(nam4, perm.test(xImpala,xCnn, mu = meandiff, all.perms = TRUE, plot= FALSE, stat= mean))
+  
+  par(mfrow=c(1,2))
+  hist(bootmeanImpala, col = 'skyblue3')
+  hist(bootmeanCnn, col = 'brown1')
+}
+```
+
+
+```{r eval=FALSE, include=FALSE}
+range <- 0:97
+for(i in range){
+  print("---------------------------")
+  print(i)
+  
+  nam4 <- paste("test", i, sep = "")
+
+  t <- get(nam4)
+  
+  print(t)
+}
+```
+
+
+
+
+
+
+
+
+```{r eval=FALSE, include=FALSE}
+B <- 10000
+set.seed(69)
+
+range <- 0:97
+for(y in range){
+  print(y)
+  nam1 <- paste("ImpalaDF", y, sep = "")
+  
+  nam2 <- paste("CnnDF", y, sep = "")
+  
+  nam3 <- paste("numCnn", y, sep = "")
+  nam4 <- paste("numImpala", y, sep = "")
+
+  name1 <- get(nam1)
+  name2 <- get(nam2)
+  
+  # Total HP in each state
+  xImpala <- name1$vidaTotal
+  xCnn <- name2$vidaTotal
+
+  
+  # the number of observations to sample
+n <- length(xCnn)  
+  
+# the number of permutation samples to take
+P <- 200000 
+
+# the variable we will resample from 
+variable <- xCnn
+
+# initialize a matrix to store the permutation data
+PermSamples <- matrix(0, nrow = n, ncol = P)
+PermSamples2 <- matrix(0, nrow = length(xImpala), ncol = P)
+
+# each column is a permutation sample of data
+# now, get those permutation samples, using a loop
+# let's take a moment to discuss what that code is doing
+for(i in 1:P)
+  {
+    PermSamples[, i] <- sample(variable, 
+                               size = n, 
+                               replace = FALSE)
+    
+    PermSamples2[, i] <- sample(xImpala, 
+                               size = length(xImpala), 
+                               replace = FALSE)
+  }
+  
+
+  
+# initialize vectors to store all of the Test-stats
+assign(nam3, 0)
+assign(nam4, 0)
+
+# Loop over my_matrix
+if(length(xCnn) < length(xImpala)){
+  for(row in 1:nrow(PermSamples)) {
+      for(col in 1:ncol(PermSamples)) {
+          if(PermSamples[row,col] > PermSamples2[row,col]){
+              assign(nam3, get(nam3) + 1)
+        
+          } else if (PermSamples[row,col] < PermSamples2[row,col]){
+            assign(nam4, get(nam4) + 1)
+          }
+      }
+  }
+} else {
+  for(row in 1:nrow(PermSamples2)) {
+      for(col in 1:ncol(PermSamples2)) {
+          if(PermSamples[row,col] > PermSamples2[row,col]){
+              assign(nam3, get(nam3) + 1)
+        
+          } else if (PermSamples[row,col] < PermSamples2[row,col]){
+            assign(nam4, get(nam4) + 1)
+          }
+      }
+  }
+  
+  
+}
+
+}
+```
+
+```{r eval=FALSE, include=FALSE}
+range <- 0:97
+totalCnn = 0
+for(y in range){
+  print("------------------------------------------------")
+  nam3 <- paste("numCnn", y, sep = "")
+  nam4 <- paste("numImpala", y, sep = "")
+  
+  t1 <- get(nam3)
+  t2 <- get(nam4)
+  
+  print(paste("***** COMBATE ", y, sep = ""))
+  print(paste("***** VICTORIAS CNN = ", t1, sep = ""))
+  print(paste("***** VICTORIAS IMPALA = ", t2, sep = ""))
+  print(paste("***** VICTORIAS CNN - IMPALA = ", t1 - t2, sep = ""))
+  print("------------------------------------------------")
+  print("")
+  
+}
+```
+
+
+
+
+```{r}
+
+set.seed(69)
+totalImpala = 0
+totalCnn = 0
+totalDraws = 0
+range <- 0:97
+for(y in range){
+  nam1 <- paste("ImpalaDF", y, sep = "")
+  
+  nam2 <- paste("CnnDF", y, sep = "")
+  
+  nam3 <- paste("numCnn", y, sep = "")
+  nam4 <- paste("numImpala", y, sep = "")
+  nam5 <- paste("numDraw", y, sep = "")
+  
+  # initialize vectors to store all of the Test-stats
+  assign(nam3, 0)
+  assign(nam4, 0)
+  assign(nam5, 0)
+  
+  name1 <- get(nam1)
+  name2 <- get(nam2)
+  
+  # Total HP in each state
+  xImpala <- name1$vidaTotal
+  xCnn <- name2$vidaTotal
+  
+  
+  #COMPARE
+  for (i in 1:length(xImpala)){
+    
+    for(j in 1:length(xCnn)){
+      
+      if(xImpala[i] > xCnn[j]){
+        assign(nam4, get(nam4) + 1)
+        
+      } else if (xImpala[i] < xCnn[j]){
+        assign(nam3, get(nam3) + 1)
+        
+      } else{
+        assign(nam5, get(nam5) + 1)
+      }
+      
+    }
+  }
+  
+}
+
+range <- 0:97
+for(y in range){
+  print("------------------------------------------------")
+  nam3 <- paste("numCnn", y, sep = "")
+  nam4 <- paste("numImpala", y, sep = "")
+  nam5 <- paste("numDraw", y, sep = "")
+  
+  t1 <- get(nam3)
+  t2 <- get(nam4)
+  t3 <- get(nam5)
+  
+  totalImpala = totalImpala + t2
+  totalCnn = totalCnn + t1
+  totalDraws = totalDraws + t3
+  
+  print(paste("***** COMBATE ", y, sep = ""))
+  print(paste("***** VICTORIAS CNN = ", t1, sep = ""))
+  print(paste("***** VICTORIAS IMPALA = ", t2, sep = ""))
+  print(paste("***** EMPATES = ", t3, sep = ""))
+  print("------------------------------------------------")
+  print("")
+  
+}
+
+```
+
+
+```{r}
+resultsPerms <- c(totalCnn,totalImpala,totalDraws)
+barplot(resultsPerms, main="Resultados permutaciones",ylab="Número de combinaciones ganadas", col= c("blue","yellow","green"), legend.text=c("NATURE-CNN","IMPALA-CNN","Empate "))
+```
+
+
+```{r}
+
+resultsPerms <- c(55,41)
+barplot(resultsPerms, main="Resultados bootstrapping donde aceptamos la hipótesis alternativa",ylab="Número de veces que la media es superior", col= c("red","purple"), legend.text=c("NATURE-CNN","IMPALA-CNN"))
+
+```
+
+
